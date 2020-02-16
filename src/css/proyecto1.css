@@ -1,0 +1,13 @@
+@font-face{
+    font-family: segan;
+    src: url('segan_light.woff');
+    src: url('segan_light.ttf');
+}
+
+.segan{
+    font-family: segan, sans-serif;
+}
+
+.minitext {
+   height:23px !important;
+}
