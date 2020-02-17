@@ -3,16 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/proyecto1/logic/Person.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/persistence/adminDAO/AdminDAO.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/presentation/admin/Dashboard.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/presentation/admin/topbars/Topbar_Dashboard.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/logic/admin/Admin.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/persistence/db/DB.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/index.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/presentation/mainPage/MainPage.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/presentation/mainPage/topbars/MainTopbar.php</file>
-            <file>file:/C:/xampp/htdocs/proyecto1/presentation/mainPage/forms/FormLogin.php</file>
+            <file>file:/C:/xampp/htdocs/proyecto1/presentation/admin/Tab_StudentInfo.php</file>
+            <file>file:/C:/xampp/htdocs/proyecto1/presentation/admin/forms/Form_SetTutor.php</file>
+            <file>file:/C:/xampp/htdocs/proyecto1/logic/project/Project.php</file>
+            <file>file:/C:/xampp/htdocs/proyecto1/presentation/admin/Tab_ProjectInfo.php</file>
         </group>
     </open-files>
 </project-private>

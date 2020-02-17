@@ -155,6 +155,15 @@ class Project
             case "Título":
                 $returnValue = $this->getTitle();
                 break;
+            case "Resumen":
+                $returnValue = $this->getAbstract();
+                break;
+            case "Planteamiento":
+                $returnValue = $this->getProblem_statement();
+                break;
+            case "Objetivos":
+                $returnValue = $this->getObjectives();
+                break;
             case "PDF":
                 $returnValue = $this->getPdf_url();
                 break;
@@ -189,6 +198,26 @@ class Project
         return $returnBoolean;
     }
 
+    function retrieveData($idprojects_) {
+        $success = false;
+        $this->db->open();
+        $this->db->execute($this->dao->retrieveData($idprojects_));
+        if($this->db->nRows()>0) {
+            $data = $this->db->fetch();
+            $this->idprojects           = $data[0];
+            $this->title                = $data[1];
+            $this->abstract             = $data[2];
+            $this->problem_statement    = $data[3];
+            $this->objectives           = $data[4];
+            $this->pdf_url              = $data[5];
+            $this->state                = $data[6];
+            $this->dao->setDAORetrievedData($data);
+            $success = true;
+        } else $success = false;
+        $this->db->close();
+        return $success;
+    }
+    
     function getIdprojects() {
         return $this->idprojects;
     }

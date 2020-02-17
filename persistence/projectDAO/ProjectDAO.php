@@ -95,6 +95,20 @@ class ProjectDAO
         return "SELECT student FROM project_x_student WHERE project = '".$this->idprojects."'";
     }
     
+    public function retrieveData($idprojects_) {
+        return "SELECT * FROM project WHERE idprojects = '".$idprojects_."'";
+    }
+    
+    public function setDAORetrievedData($data) {
+        $this->idprojects           = $data[0];
+        $this->title                = $data[1];
+        $this->abstract             = $data[2];
+        $this->problem_statement    = $data[3];
+        $this->objectives           = $data[4];
+        $this->pdf_url              = $data[5];
+        $this->state                = $data[6];
+    }
+    
     function getIdprojects() {
         return $this->idprojects;
     }

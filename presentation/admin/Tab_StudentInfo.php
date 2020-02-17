@@ -1,6 +1,5 @@
 <?php
 require_once 'logic/project/Project.php';
-require_once 'presentation/admin/modals/Modal_SetTutor.php';
 
 
     $infoStudent = new Student($_GET['userid'],
@@ -12,9 +11,6 @@ require_once 'presentation/admin/modals/Modal_SetTutor.php';
             "");
     $infoStudent->retrieveAccountData(true);
        
-if(!empty($_GET['selected_professor'])) {
-    
-}
 ?>
 <script type="text/javascript">
     function grabIdprojects(evt) {
@@ -76,9 +72,10 @@ if(!empty($_GET['selected_professor'])) {
                                 echo "<td id='capita".$project->getIdprojects()."'>".$project->getState()."</td>";
                                 
                                 echo "<td>";
-                                    echo "<a href='#' onclick='grabIdprojects(this)' id='".$project->getIdprojects()."'"
-                                            . "data-toggle='modal' data-target='#modal_setTutor'"
-                                            . "data-backdrop='static' data-keyboard='false'>";
+                                    //echo "<a href='#' onclick='grabIdprojects(this)' id='".$project->getIdprojects()."'"
+                                            //. "data-toggle='modal' data-target='#modal_setTutor'"
+                                            //. "data-backdrop='static' data-keyboard='false'>";
+                                    echo "<a href='index.php?tid=". base64_encode("presentation/admin/Tab_ProjectInfo.php")."&idprojects=".$project->getIdprojects()."'>";
                                         echo "<span class='fas fa-user-plus'></span>";
                                     echo "</a>";
                                 echo "</td>";

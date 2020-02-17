@@ -11,7 +11,7 @@
     <div class="form-group">
         <label for="form_set_tutor_search">
             <span class="fas fa-user-plus"></span>
-            &nbsp;Buscar profesor
+            &nbsp;Profesor Tutor:
             <input type="text"
                    class="form-control"
                    name="form_set_tutor_search"

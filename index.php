@@ -153,7 +153,6 @@ else {
                     $_POST['form_create_project_pdf_url'],
                     0,
                     $_SESSION['id']);
-            $newProject->getIdFromDB();
             if($newProject->exists())
                 $error=10;
             else {
