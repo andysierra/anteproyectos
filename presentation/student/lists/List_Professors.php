@@ -1,4 +1,4 @@
-<?php include "presentation/admin/modals/Modal_CreateStudent.php"; ?>
+<?php include "presentation/admin/modals/Modal_CreateProfessor.php"; ?>
 
 <?php
     $cols = array();
@@ -13,9 +13,9 @@
     <div class="card-header bg-primary py-1 px-2 d-flex flex-row justify-content-between">
         
         <div class="testgreen flex-shrink-0">
-            <button class="btn btn-sm btn-light py-0" data-toggle="modal" data-target="#modal_createStudent"
+            <button class="btn btn-sm btn-light py-0" data-toggle="modal" data-target="#modal_createProfessor"
                     data-backdrop="static" data-keyboard="false">
-                <b class="segan">Crear Estudiante</b>
+                <b class="segan">Crear Profesor</b>
             </button>
         </div>
         
@@ -25,8 +25,8 @@
             </button>
             
             <input type="text"
-                   name="search_list_students"
-                   id="search_list_students"
+                   name="search_list_professors"
+                   id="search_list_professors"
                    class="form-control input-sm minitext ml-2 w-25"
                    pattern="[a-zA-Z0-9]+"
                    placeholder="Buscar"/>
@@ -48,14 +48,14 @@
             </tr>
         </thead>
         <tbody id="search-lines">
-            <?php include "Rows_Students.php"; ?>
+            <?php include "Rows_Professors.php"; ?>
         </tbody>
     </table>
 </div>
 <script type="text/javascript">
     function globalSearch(){
-        var filter = $('#search_list_students').val();
-        var route = "indexAjax.php?sid=<?=base64_encode('presentation/admin/lists/Rows_Students.php')?>&filter="+filter;
+        var filter = $('#search_list_professors').val();
+        var route = "indexAjax.php?sid=<?=base64_encode('presentation/admin/lists/Rows_Professors.php')?>&filter="+filter;
         $("#search-lines").load(route);
     }
 </script>

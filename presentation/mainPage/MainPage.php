@@ -12,13 +12,13 @@
   </button>
 </div>
 <div class="alert alert-success alert-dismissible fade <?php if($error==-5) echo 'show'; else echo 'd-none'; ?>" role="alert">
-  <strong>Nuevo estudiante activo!</strong> Ahora puede iniciar sesión con su nueva cuenta.
+  <strong>Nuevo usuario activo!</strong> Ahora puede iniciar sesión con su nueva cuenta.
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="alert alert-danger alert-dismissible fade <?php if($error==5) echo 'show'; else echo 'd-none'; ?>" role="alert">
-  <strong>Error al confirmar nuevo estudiante!</strong> Por favor contacte con el administrador.
+  <strong>Error al confirmar nuevo usuario!</strong> Por favor contacte con el administrador.
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>

@@ -7,7 +7,7 @@
   </button>
 </div>
 <div class="alert alert-success alert-dismissible fade <?php if($error==-2) echo 'show'; else echo 'd-none'; ?>" role="alert">
-  <strong>Estudiante creado!</strong> Se le ha enviado un correo electrónico a <?=$_POST['form_create_student_email']?> para establecer una contraseña y activar el usuario
+  <strong>Usuario creado!</strong> Se le ha enviado un correo electrónico para establecer una contraseña y activar el usuario
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -20,26 +20,12 @@
 </div>
   
     <div class="container">
-        <div class="row">
+        <div class="row" id="tab-content">
             
-            <div class="card col-12 col-sm-12 col-md-9 col-lg-9
-                 mx-auto px-0">                
-                <div class="card-header py-0">
-                    <a class="text-primary py-0" href="#">Todos los estudiantes</a>
-                    <a class="text-primary py-0 ml-3" href="#">Estudiantes y proyectos</a>
-                </div>
-                <div class="card-body px-1 py-2">
-                    <h4 class="segan ml-2 pb-3">Estudiantes</h4>
-                    <?php 
-                        if(!empty($_GET['list_name']))
-                        {
-                            if(base64_decode($_GET['list_name']) == 'list_students_projects')
-                                include "lists/List_Students_Projects.php";
-                        }
-                        else include "lists/List_Students.php";
-                    ?>
-                </div>
-            </div>
+            <?php
+                include base64_decode($tabid);
+            ?>
+            
         </div>
     </div>
 </body>

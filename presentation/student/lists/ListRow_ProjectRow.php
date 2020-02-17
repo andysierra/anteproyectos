@@ -1,0 +1,14 @@
+<tr>
+    <td>
+        <?=$project->getCol($cols[0]);?>
+    </td>
+    <td>
+        <?=$project->getCol($cols[1]);?>
+    </td>
+    <td>
+        <?=$project->getCol($cols[2]);?>
+    </td>
+    <td>
+        <?=$project->getCol($cols[3]);?>
+    </td>
+</tr>

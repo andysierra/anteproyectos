@@ -2,12 +2,15 @@
 session_start();
 require_once 'logic/admin/Admin.php';
 require_once 'logic/student/Student.php';
+require_once 'logic/professor/Professor.php';
 require_once 'logic/program/Program.php';
+require_once 'logic/project/Project.php';
 
 $error = 0;
 $newConfirmation = 0;
 $topbar = "presentation/mainPage/topbars/MainTopbar.php";
 $tabs = "";
+$tabid = base64_encode("presentation/admin/Tab_Home.php");
 $content = "presentation/mainPage/MainPage.php";
 $user;
 
@@ -23,29 +26,57 @@ if(!empty($_POST['form_confirm_student'])) {
     }
 }
 else if(!empty($_POST['form_confirm_professor'])) {
-    $error = -6;
+    $newUser = new Professor("",$_POST['form_confirm_professor'],"","","","","");
+    if($newUser->userExists()) {
+        if($newUser->confirmNewUser($_POST['form_confirm_professor_password'],
+                                 $_POST['form_confirm_professor_email'],
+                                 $_POST['form_confirm_professor_profilepic'])) // aquí se activa al profesor
+                $error = -5;
+        else $error = 5;
+    }
 }
 
 // SI VENGO DESDE UN CORREO ELECTRÓNICO
-if(!empty($_GET['email_activatestudent'])) {
+if(!empty($_GET['email_activatestudent']) || !empty($_GET['email_activateprofessor'])) {
     // FUTURE: verificar aquí si el hash que viene del correo es válido
 
-    $newUser = new Student("",$_GET['email_activatestudent'],"","","","","");
-    if($newUser->userExists())
-    {
-        if(!empty($_SESSION['entity'])) {
-            $user = null;
-            unset($_SESSION['id']);
-            unset($_SESSION['entity']);
-            unset($_SESSION);
-            session_destroy();
-            $error = 3;
+    if(!empty($_GET['email_activatestudent'])) {
+        $newUser = new Student("",$_GET['email_activatestudent'],"","","","","");
+        if($newUser->userExists())
+        {
+            if(!empty($_SESSION['entity'])) {
+                $user = null;
+                unset($_SESSION['id']);
+                unset($_SESSION['entity']);
+                unset($_SESSION);
+                session_destroy();
+                $error = 3;
+            }
+            $topbar  = "presentation/mainPage/topbars/MainTopbar.php";
+            $tabs    = "";
+            $content = "presentation/mainPage/EmailConfirmUser.php";
+            $newConfirmation = 1;
         }
-        $topbar  = "presentation/mainPage/topbars/MainTopbar.php";
-        $tabs    = "";
-        $content = "presentation/mainPage/EmailConfirmUser.php";
-        $newConfirmation = 1;
     }
+    else if(!empty($_GET['email_activateprofessor'])) {
+        $newUser = new Professor("",$_GET['email_activateprofessor'],"","","","","");
+        if($newUser->userExists())
+        {
+            if(!empty($_SESSION['entity'])) {
+                $user = null;
+                unset($_SESSION['id']);
+                unset($_SESSION['entity']);
+                unset($_SESSION);
+                session_destroy();
+                $error = 3;
+            }
+            $topbar  = "presentation/mainPage/topbars/MainTopbar.php";
+            $tabs    = "";
+            $content = "presentation/mainPage/EmailConfirmUser.php";
+            $newConfirmation = 2;
+        }
+    }
+    
     else { // SI ESE USUARIO NO FUE CREADO
         // SI TENGO SESIÓN INICIADA
         if(!empty($_SESSION['entity']))
@@ -95,6 +126,43 @@ if(!empty($_SESSION['entity']) && !empty($_POST['form_create_student'])) {
         $error = -2;
     }
 }
+else {
+    if(!empty($_SESSION['entity']) && !empty($_POST['form_create_professor'])) {
+    
+        // verificar si el profesor existe, o sino error 2
+        $newUser = new Professor("",$_POST['form_create_professor_username'],
+                               "","","","","");
+        if($newUser->userExists())
+            $error=2;
+        else {
+            $newUser->insertNewProfessor ($_POST['form_create_professor_fullname'],
+                                        $_POST['form_create_professor_program'],
+                                        $_POST['form_create_professor_email']);
+            $error = -2;
+        }
+    }
+    else {
+        if(!empty($_SESSION['entity']) && !empty($_POST['form_create_project'])) {
+
+            // verificar si el proyecto existe, o sino error 10
+            $newProject = new Project("",
+                    $_POST['form_create_project_title'],
+                    $_POST['form_create_project_abstract'],
+                    $_POST['form_create_project_problem_statement'],
+                    $_POST['form_create_project_objectives'],
+                    $_POST['form_create_project_pdf_url'],
+                    0,
+                    $_SESSION['id']);
+            $newProject->getIdFromDB();
+            if($newProject->exists())
+                $error=10;
+            else {
+                $newProject->insert();
+                $error = -10;
+            }
+        }
+    }
+}
 
 // SI YA HAY UN USUARIO EN SESIÓN   (PONGA LOS EMAIL REDIRS AQUÍ)
 if(!empty($_SESSION['entity']) &&
@@ -116,6 +184,11 @@ if(!empty($_SESSION['entity']) &&
             $content = "presentation/student/Dashboard.php";
             break;
     }
+    
+    // ESPACIO PARA REDIRS
+    if(!empty($_GET['tid'])) {
+        $tabid = $_GET['tid'];
+    }
 }
 else {
     // SI NO HAY UN USUARIO Y SE LOGUEA
@@ -132,7 +205,6 @@ else {
             $content = "presentation/admin/Dashboard.php";
         }
         else {
-            
             $user = new Student("",$_POST['form_login_username'], $_POST['form_login_password'],"","","","","");
             if($user->auth() && $user->isActive()) {
                 $user->retrieveAccountData(false);
@@ -143,11 +215,22 @@ else {
                 $content = "presentation/student/Dashboard.php";
             }
             else {
-                // BLOQUE DE CÓDIGO PARA CUANDO NINGUNO DE LOS USUARIOS EXISTA EN EL SISTEMA
-                $error = 1;   
-                $topbar  = "presentation/mainPage/topbars/MainTopbar.php";
-                $tabs    = "";
-                $content = "presentation/mainPage/MainPage.php";
+                $user = new Professor("",$_POST['form_login_username'], $_POST['form_login_password'],"","","","","");
+                if($user->auth() && $user->isActive()) {
+                $user->retrieveAccountData(false);
+                    $_SESSION['id'] = $user->getId();
+                    $_SESSION['entity'] = 3;
+                    $topbar  = "presentation/professor/topbars/Topbar_Dashboard.php";
+                    $tabs    = "presentation/professor/topbars/Tabs_Dashboard.php";
+                    $content = "presentation/professor/Dashboard.php";
+                }
+                else {
+                    // BLOQUE DE CÓDIGO PARA CUANDO NINGUNO DE LOS USUARIOS EXISTA EN EL SISTEMA
+                    $error = 1;   
+                    $topbar  = "presentation/mainPage/topbars/MainTopbar.php";
+                    $tabs    = "";
+                    $content = "presentation/mainPage/MainPage.php";
+                }
             }
         }
     }
@@ -169,8 +252,8 @@ else {
     </head>
     
 <?php
-    include $topbar;
+    if($topbar!="")include $topbar;
     if($tabs!="")include $tabs;
-    include $content;
+    if($content!="")include $content;
 ?>
 </html>

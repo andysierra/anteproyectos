@@ -1,0 +1,17 @@
+<tr>
+    <td>
+        <?=$professor->getCol($cols[0]);?>
+    </td>
+    <td>
+        <?=$professor->getCol($cols[1]);?>
+    </td>
+    <td>
+        <?=$professor->getCol($cols[2]);?>
+    </td>
+    <td>
+        <?=$professor->getCol($cols[3]);?>
+    </td>
+    <td>
+        <?=$professor->getCol($cols[4]);?>
+    </td>
+</tr>

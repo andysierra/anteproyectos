@@ -1,37 +1,36 @@
 <?php
 require_once 'persistence/db/DB.php';
-require_once 'persistence/studentDAO/StudentDAO.php';
+require_once 'persistence/professorDAO/ProfessorDAO.php';
 require_once 'logic/Person.php';
 require_once 'logic/program/Program.php';
-require_once 'logic/project/Project.php';
 
-class Student extends Person
+class Professor extends Person
 {
     private $db;
     private $dao;
     private $dataRetrieved;
-    public function Student($idstudent_="", $username_="", $password_="", $fullname_="", 
+    public function Professor($idprofessor_="", $username_="", $password_="", $fullname_="", 
                             $profilepic_="", $email_="", $active_="") {
-        $this->Person($idstudent_, $username_, $password_, $fullname_, $profilepic_, $email_, $active_);
+        $this->Person($idprofessor_, $username_, $password_, $fullname_, $profilepic_, $email_, $active_);
         $this->db = new DB();
-        $this->dao = new StudentDAO($idstudent_, $username_, $password_, $fullname_, $profilepic_, $email_, $active_);
+        $this->dao = new ProfessorDAO($idprofessor_, $username_, $password_, $fullname_, $profilepic_, $email_, $active_);
         $this->dataRetrieved = false;
     }
     
-    public function insertNewStudent($fullname_, $program_, $email_) {
+    public function insertNewProfessor($fullname_, $program_, $email_) {
         $success = false;
-        $createStudentHasProgram = false;
+        $createProfessorHasProgram = false;
         $this->db->open();
-        $this->db->execute($this->dao->insertNewStudent($fullname_, $email_));
-        $createStudentHasProgram = $this->db->success();
+        $this->db->execute($this->dao->insertNewProfessor($fullname_, $email_));
+        $createProfessorHasProgram = $this->db->success();
         $this->db->close();
         
-        if($createStudentHasProgram)
+        if($createProfessorHasProgram)
             if((new Program("","",""))->programExists($program_))
             {
                 $this->retrieveAccountData(false);
                 $this->db->open();
-                $this->db->execute($this->dao->insertNewStudentHasProgram($program_));
+                $this->db->execute($this->dao->insertNewProfessorHasProgram($program_));
                 $success = $this->db->success();
                 $this->db->close();
             }
@@ -82,15 +81,15 @@ class Student extends Person
 
     // This function will search a string in all columns
     public function search($string) {
-        $students = array();
+        $professors = array();
 
         $this->db->open();
         
         $winnerCol = '';
         
         if($string!="") {
-            $this->db->execute($this->dao->searchBy('idstudent', $string));
-            if($this->db->nRows() != 0) $winnerCol = 'idstudent';
+            $this->db->execute($this->dao->searchBy('idprofessor', $string));
+            if($this->db->nRows() != 0) $winnerCol = 'idprofessor';
             else {
                 $this->db->execute($this->dao->searchBy('username', $string));
                 if($this->db->nRows() != 0) $winnerCol = 'username';
@@ -111,11 +110,11 @@ class Student extends Person
         
         if($winnerCol != '')
             for($i=0; $i<$this->db->nRows(); $i++)
-                array_push($students, $this->createDataStudent($this->db->fetch()));
+                array_push($professors, $this->createDataProfessor($this->db->fetch()));
             
         $this->db->close();
         
-        return $winnerCol!='' ?  $students : null;
+        return $winnerCol!='' ?  $professors : null;
     }
     
     public function conditionSearch() {
@@ -130,16 +129,16 @@ class Student extends Person
         $this->dataRetrieved = $dataRetrieved;
     }
    
-    private function createDataStudent($data) {
-        $student = new Student($data[0],
+    private function createDataProfessor($data) {
+        $professor = new Professor($data[0],
                                $data[1],
                                $data[2],
                                $data[3],
                                $data[4],
                                $data[5],
                                $data[6]);
-        $student->setDataRetrieved(true);
-        return $student;
+        $professor->setDataRetrieved(true);
+        return $professor;
     }
     
     public function userExists() {
@@ -150,7 +149,7 @@ class Student extends Person
         $this->db->close();
         return $returnBoolean;
     }
-    
+
     public function getCol($what) {
         $returnValue = "";
         switch($what) {
@@ -172,29 +171,26 @@ class Student extends Person
         }
         return $returnValue;
     }
-
-    public function getProjectsByStudentId() {
-        $projects = array();
+    
+    public function staticListAllProfessorsByPair($column, $value) {
+        $professors = array();
         $this->db->open();
-        $this->db->execute($this->dao->getProjectsByStudentId());
+        $this->db->execute($this->dao->staticListAllProfessorsByPair($column, $value));
         if($this->db->nRows()>0)
-            for($i=0; $i<$this->db->nRows(); $i++)
-            {
+            for($i=0; $i<$this->db->nRows(); $i++) {
                 $data = $this->db->fetch();
-                array_push ($projects, new Project($data[0],
-                                                    $data[1],
-                                                    $data[2],
-                                                    $data[3],
-                                                    $data[4],
-                                                    $data[5],
-                                                    $data[6],
-                                                    $this->id));
+                array_push($professors, new Professor($data[0],
+                                                      $data[1],
+                                                      $data[2],
+                                                      $data[3],
+                                                      $data[4],
+                                                      $data[5],
+                                                      $data[6],));
             }
         $this->db->close();
-        return $projects;
+        return $professors;
     }
-
-
+    
     public function toString() {
         echo "[".$this->id.", ".
                 $this->username.", ".

@@ -1,8 +1,8 @@
 <?php
 
-class StudentDAO
+class ProfessorDAO
 {
-    private $idstudent;
+    private $idprofessor;
     private $username;
     private $password;
     private $fullname;
@@ -10,14 +10,14 @@ class StudentDAO
     private $email;
     private $active;
     
-    public function StudentDAO( $idstudent_,
+    public function ProfessorDAO( $idprofessor_,
                               $username_,
                               $password_,
                               $fullname_,
                               $profilepic_,
                               $email_,
                               $active_) {
-        $this->idstudent = $idstudent_;
+        $this->idprofessor = $idprofessor_;
         $this->username = $username_;
         $this->password = $password_;
         $this->fullname = $fullname_;
@@ -26,15 +26,15 @@ class StudentDAO
         $this->active = $active_;
     }
     
-    public function insertNewStudent($fullname_, $email_) {
-        return "INSERT INTO student(username, fullname, email) VALUES("
+    public function insertNewProfessor($fullname_, $email_) {
+        return "INSERT INTO professor(username, fullname, email) VALUES("
         . "'".$this->username."',"
         . "'".$fullname_."',"
         . "'".$email_."')";
     }
     
-    public function insertNewStudentHasProgram($program_) {
-        return "INSERT INTO student_x_program(student, program) VALUES('".$this->idstudent."','".$program_."')";
+    public function insertNewProfessorHasProgram($program_) {
+        return "INSERT INTO professor_x_program(professor, program) VALUES('".$this->idprofessor."','".$program_."')";
     }
 
     public function confirmNewUser($password_, $email_, $profilepic_, $active_) {
@@ -46,84 +46,76 @@ class StudentDAO
             $now = new DateTime();
         }
         return $profilepic_!="" ? 
-                "UPDATE student SET "
+                "UPDATE professor SET "
                 . "password=md5('".$this->password."'),"
                 . "email='".$this->email."',"
                 . "profilepic='".$now->format('Y-m-d_H-i-s_').$this->profilepic."',"
                 . "active='".$this->active."' WHERE username='".$this->username."'"
                 :
-                "UPDATE student SET "
+                "UPDATE professor SET "
                 . "password=md5('".$this->password."'),"
                 . "email='".$this->email."',"
                 . "active='".$this->active."' WHERE username='".$this->username."'";
     }
 
         public function auth() {
-        return "SELECT * FROM student WHERE "
+        return "SELECT * FROM professor WHERE "
         . "username = '".$this->username."' AND "
         . "password = md5('".$this->password."')";
     }
     
     public function isActive() {
-        return "SELECT active FROM student WHERE username = '".$this->username."'";
+        return "SELECT active FROM professor WHERE username = '".$this->username."'";
     }
 
     public function retrieveAccountData($withId) {
         $propNames = array();
-        foreach((new ReflectionClass('StudentDAO'))->getProperties() as $prop)
+        foreach((new ReflectionClass('ProfessorDAO'))->getProperties() as $prop)
             array_push($propNames, $prop->getName());
         
         return $withId==true ? 
-                "SELECT ".implode(", ", $propNames)." FROM student WHERE idstudent = '".$this->idstudent."'"
+                "SELECT ".implode(", ", $propNames)." FROM professor WHERE idprofessor = '".$this->idprofessor."'"
                 :
-                "SELECT ".implode(", ", $propNames)." FROM student WHERE username = '".$this->username."'";
+                "SELECT ".implode(", ", $propNames)." FROM professor WHERE username = '".$this->username."'";
     }
     
-    public function searchBy($column, $value="") {
+public function searchBy($column, $value="") {
         $propNames = array();
-        foreach((new ReflectionClass('StudentDAO'))->getProperties() as $prop)
+        foreach((new ReflectionClass('ProfessorDAO'))->getProperties() as $prop)
             array_push($propNames, $prop->getName());
         
         $returnValue = "";
         
         switch($column) {
-            case 'idstudent':
-                $returnValue = "SELECT ".implode(", ", $propNames)." FROM student WHERE idstudent like '%".$value."%'";
+            case 'idprofessor':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM professor WHERE idprofessor like '%".$value."%'";
                 break;
             case 'username':
-                $returnValue = "SELECT ".implode(", ", $propNames)." FROM student WHERE username like '%".$value."%'";
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM professor WHERE username like '%".$value."%'";
                 break;
             case 'fullname':
-                $returnValue = "SELECT ".implode(", ", $propNames)." FROM student WHERE fullname like '%".$value."%'";
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM professor WHERE fullname like '%".$value."%'";
                 break;
             case 'email':
-                $returnValue = "SELECT ".implode(", ", $propNames)." FROM student WHERE email like '%".$value."%'";
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM professor WHERE email like '%".$value."%'";
                 break;
             case 'all':
-                $returnValue = "SELECT ".implode(", ", $propNames)." FROM student";
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM professor";
                 break;
         }
         return $returnValue;
     }
     
-    public function userExists() {
-        return "SELECT idstudent FROM student WHERE username = '".$this->username."'";
+    public function staticListAllProfessorsByPair($column, $value) {
+        return "SELECT * FROM professor WHERE ".$column." like '%".$value."%' limit 10";
     }
-    
-    public function listAllStudents() {
-        $propNames = array();
-        foreach((new ReflectionClass('StudentDAO'))->getProperties() as $prop)
-            array_push($propNames, $prop->getName());
-        
-        return "SELECT ".implode(", ", $propNames)." FROM student";
-    }
-    
-    public function getProjectsByStudentId() {
-        return "SELECT * FROM project WHERE idprojects IN (SELECT project FROM project_x_student WHERE student = '".$this->idstudent."')";
+
+        public function userExists() {
+        return "SELECT idprofessor FROM professor WHERE username = '".$this->username."'";
     }
 
     public function setData($data) {
-        $this->idstudent    = $data[0];
+        $this->idprofessor  = $data[0];
         $this->username     = $data[1];
         $this->password     = $data[2];
         $this->fullname     = $data[3];

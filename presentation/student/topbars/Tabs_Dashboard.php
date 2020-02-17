@@ -4,41 +4,23 @@
         
         <ul class="nav d-flex flex-wrap">
             <li class="nav-item mx-2">
-                <a href="#" type="button" class="btn btn-primary">
+                <a href="index.php?tid=<?=base64_encode('presentation/student/Tab_Home.php')?>" 
+                   type="button" class="btn btn-primary tab">
                     <span class="fas fa-home mt-1"></span>
                 </a>
             </li>
             <li class="nav-item mx-2">
-                <a href="#" type="button" class="btn btn-primary">
-                    Estudiantes
+                <a href="index.php?tid=<?=base64_encode('presentation/student/Tab_Projects.php')?>" 
+                   type="button" class="btn btn-primary tab">
+                    Proyectos
                 </a>
             </li>
             <li class="nav-item mx-2">
-                <a href="#" type="button" class="btn btn-primary">
+                <a href="index.php?tid=<?=base64_encode('presentation/student/Tab_Professors.php')?>" 
+                   type="button" class="btn btn-primary tab">
                     Profesores
-                </a>
-            </li>
-            <li class="nav-item mx-2">
-                <a href="#" type="button" class="btn btn-primary">
-                    Profesores
-                </a>
-            </li>
-            <li class="nav-item mx-2">
-                <a href="#" type="button" class="btn btn-primary">
-                    Profesores
-                </a>
-            </li>
-            <li class="nav-item mx-2">
-                <a href="#" type="button" class="btn btn-primary">
-                    Profesores
-                </a>
-            </li>
-            <li class="nav-item mx-2">
-                <a href="#" type="button" class="btn btn-primary">
-                    Configuración
                 </a>
             </li>
         </ul>
-        
     </div>
 </div>
