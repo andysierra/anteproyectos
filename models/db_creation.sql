@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS `anteproyectos`.`student` (
   `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NULL,
   `fullname` VARCHAR(45) NULL,
-  `program` VARCHAR(45) NULL,
   `profilepic` VARCHAR(400) NULL,
   `email` VARCHAR(400) NULL,
   `active` TINYINT NOT NULL,
@@ -151,6 +150,63 @@ CREATE TABLE IF NOT EXISTS `anteproyectos`.`tag` (
   CONSTRAINT `fk_keywords_project1`
     FOREIGN KEY (`project`)
     REFERENCES `anteproyectos`.`project` (`idprojects`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `anteproyectos`.`program`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `anteproyectos`.`program` (
+  `idprogram` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `active` TINYINT NOT NULL,
+  PRIMARY KEY (`idprogram`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `anteproyectos`.`student_x_program`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `anteproyectos`.`student_x_program` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `student` INT NOT NULL,
+  `program` INT NOT NULL,
+  PRIMARY KEY (`id`, `student`, `program`),
+  INDEX `fk_student_has_program_program1_idx` (`program` ASC) ,
+  INDEX `fk_student_has_program_student1_idx` (`student` ASC) ,
+  CONSTRAINT `fk_student_has_program_student1`
+    FOREIGN KEY (`student`)
+    REFERENCES `anteproyectos`.`student` (`idstudent`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_student_has_program_program1`
+    FOREIGN KEY (`program`)
+    REFERENCES `anteproyectos`.`program` (`idprogram`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `anteproyectos`.`professor_x_program`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `anteproyectos`.`professor_x_program` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `professor` INT NOT NULL,
+  `program` INT NOT NULL,
+  PRIMARY KEY (`id`, `professor`, `program`),
+  INDEX `fk_professor_has_program_program1_idx` (`program` ASC) ,
+  INDEX `fk_professor_has_program_professor1_idx` (`professor` ASC) ,
+  CONSTRAINT `fk_professor_has_program_professor1`
+    FOREIGN KEY (`professor`)
+    REFERENCES `anteproyectos`.`professor` (`idprofessor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_professor_has_program_program1`
+    FOREIGN KEY (`program`)
+    REFERENCES `anteproyectos`.`program` (`idprogram`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

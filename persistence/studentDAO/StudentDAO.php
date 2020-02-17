@@ -2,41 +2,41 @@
 
 class StudentDAO
 {
-    private $idStudent;
+    private $idstudent;
     private $username;
     private $password;
     private $fullname;
-    private $program;
     private $profilepic;
     private $email;
     private $active;
     
-    public function StudentDAO( $idStudent_,
+    public function StudentDAO( $idstudent_,
                               $username_,
                               $password_,
                               $fullname_,
-                              $program_,
                               $profilepic_,
                               $email_,
                               $active_) {
-        $this->idStudent = $idStudent_;
+        $this->idstudent = $idstudent_;
         $this->username = $username_;
         $this->password = $password_;
         $this->fullname = $fullname_;
-        $this->program  = $program_;
         $this->profilepic = $profilepic_;
         $this->email    = $email_;
         $this->active = $active_;
     }
     
-    public function insertNewStudent($fullname_, $program_, $email_) {
-        return "INSERT INTO student(username, fullname, program, email) VALUES("
+    public function insertNewStudent($fullname_, $email_) {
+        return "INSERT INTO student(username, fullname, email) VALUES("
         . "'".$this->username."',"
         . "'".$fullname_."',"
-        . "'".$program_."',"
         . "'".$email_."')";
     }
     
+    public function insertNewStudentHasProgram($program_) {
+        return "INSERT INTO student_x_program(student, program) VALUES('".$this->idstudent."','".$program_."')";
+    }
+
     public function confirmNewUser($password_, $email_, $profilepic_, $active_) {
         $this->password = $password_;
         $this->email = $email_;
@@ -72,8 +72,9 @@ class StudentDAO
         $propNames = array();
         foreach((new ReflectionClass('StudentDAO'))->getProperties() as $prop)
             array_push($propNames, $prop->getName());
+        
         return $withId==true ? 
-                "SELECT ".implode(", ", $propNames)." FROM student WHERE idstudent = '".$this->idStudent."'"
+                "SELECT ".implode(", ", $propNames)." FROM student WHERE idstudent = '".$this->idstudent."'"
                 :
                 "SELECT ".implode(", ", $propNames)." FROM student WHERE username = '".$this->username."'";
     }
@@ -86,7 +87,7 @@ class StudentDAO
         $returnValue = "";
         
         switch($column) {
-            case 'idStudent':
+            case 'idstudent':
                 $returnValue = "SELECT ".implode(", ", $propNames)." FROM student WHERE idstudent = '".$value."'";
                 break;
             case 'username':
@@ -107,13 +108,12 @@ class StudentDAO
     }
 
     public function setData($data) {
-        $this->idadmin      = $data[0];
+        $this->idstudent    = $data[0];
         $this->username     = $data[1];
         $this->password     = $data[2];
         $this->fullname     = $data[3];
-        $this->program      = $data[4];
-        $this->profilepic   = $data[5];
-        $this->email        = $data[6];
-        $this->active       = $data[7];
+        $this->profilepic   = $data[4];
+        $this->email        = $data[5];
+        $this->active       = $data[6];
     }
 }

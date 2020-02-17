@@ -2,6 +2,7 @@
 session_start();
 require_once 'logic/admin/Admin.php';
 require_once 'logic/student/Student.php';
+require_once 'logic/program/Program.php';
 
 $error = 0;
 $newConfirmation = 0;
@@ -12,7 +13,7 @@ $user;
 
 // SI VENGO DE CONFIRMAR UN NUEVO USUARIO
 if(!empty($_POST['form_confirm_student'])) {
-    $newUser = new Student("",$_POST['form_confirm_student'],"","","","","","");
+    $newUser = new Student("",$_POST['form_confirm_student'],"","","","","");
     if($newUser->userExists()) {
         if($newUser->confirmNewUser($_POST['form_confirm_student_password'],
                                  $_POST['form_confirm_student_email'],
@@ -29,7 +30,7 @@ else if(!empty($_POST['form_confirm_professor'])) {
 if(!empty($_GET['email_activatestudent'])) {
     // FUTURE: verificar aquí si el hash que viene del correo es válido
 
-    $newUser = new Student("",$_GET['email_activatestudent'],"","","","","","");
+    $newUser = new Student("",$_GET['email_activatestudent'],"","","","","");
     if($newUser->userExists())
     {
         if(!empty($_SESSION['entity'])) {
@@ -58,7 +59,7 @@ if(!empty($_GET['email_activatestudent'])) {
                     $content = "presentation/admin/Dashboard.php";
                     break;
                 case 2:
-                    $user = new Student($_SESSION['id'],"","","","","","","");
+                    $user = new Student($_SESSION['id'],"","","","","","");
                     $user->retrieveAccountData(true);
                     $topbar  = "presentation/student/topbars/Topbar_Dashboard.php";
                     $tabs    = "presentation/student/topbars/Tabs_Dashboard.php";
@@ -84,7 +85,7 @@ if(!empty($_SESSION['entity']) && !empty($_POST['form_create_student'])) {
     
     // verificar si el estudiante existe, o sino error 2
     $newUser = new Student("",$_POST['form_create_student_username'],
-                           "","","","","","");
+                           "","","","","");
     if($newUser->userExists())
         $error=2;
     else {

@@ -27,11 +27,18 @@
         <label for="form_create_student_program">
             <span class="fas fa-book"></span>
             Carrera del estudiante: </label>
-        <input type="text"
-               name="form_create_student_program"
-               class="form-control"
-               maxlength="45"
-               placeholder="Programa académico"/>
+        <select id="form_create_student_program"
+                name="form_create_student_program"
+                class="custom-select custom-select-sm">
+            <option selected>Seleccione</option>
+            <?php 
+                $i=1;
+                foreach((new Program("", "", ""))->fetchProgramNames() as $name) {
+                    echo "<option value='".$i."'>".$name."</option>";
+                    $i++;
+                }
+            ?>
+        </select>
     </div>
     <div class="form-group">
         <label for="form_create_student_email">
@@ -41,7 +48,8 @@
                name="form_create_student_email"
                class="form-control"
                maxlength="45"
-               placeholder="Correo electrónico"/>
+               placeholder="Correo electrónico"
+               required/>
     </div>
     
     <input type="submit" class="btn btn-primary" value="Crear usuario"/>

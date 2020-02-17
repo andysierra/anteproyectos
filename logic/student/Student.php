@@ -2,28 +2,38 @@
 require_once 'persistence/db/DB.php';
 require_once 'persistence/studentDAO/StudentDAO.php';
 require_once 'logic/Person.php';
+require_once 'logic/program/Program.php';
 
 class Student extends Person
 {
-    private $program;
-    
     private $db;
     private $dao;
     private $dataRetrieved;
     public function Student($idstudent_="", $username_="", $password_="", $fullname_="", 
-                            $program_="", $profilepic_="", $email_="", $active_="") {
-        $this->Person($idstudent_, $username_, $password_, $fullname_, $program_, $profilepic_, $email_, $active_);
+                            $profilepic_="", $email_="", $active_="") {
+        $this->Person($idstudent_, $username_, $password_, $fullname_, $profilepic_, $email_, $active_);
         $this->db = new DB();
-        $this->dao = new StudentDAO($idstudent_, $username_, $password_, $fullname_, $program_, $profilepic_, $email_, $active_);
+        $this->dao = new StudentDAO($idstudent_, $username_, $password_, $fullname_, $profilepic_, $email_, $active_);
         $this->dataRetrieved = false;
     }
     
     public function insertNewStudent($fullname_, $program_, $email_) {
         $success = false;
+        $createStudentHasProgram = false;
         $this->db->open();
-        $this->db->execute($this->dao->insertNewStudent($fullname_, $program_, $email_));
-        $success = $this->db->success();
+        $this->db->execute($this->dao->insertNewStudent($fullname_, $email_));
+        $createStudentHasProgram = $this->db->success();
         $this->db->close();
+        
+        if($createStudentHasProgram)
+            if((new Program("","",""))->programExists($program_))
+            {
+                $this->retrieveAccountData(false);
+                $this->db->open();
+                $this->db->execute($this->dao->insertNewStudentHasProgram($program_));
+                $success = $this->db->success();
+                $this->db->close();
+            }
         return $success;
     }
     
@@ -61,10 +71,9 @@ class Student extends Person
             $this->username     = $data[1];
             $this->password     = $data[2];
             $this->fullname     = $data[3];
-            $this->program      = $data[4];
-            $this->profilepic   = $data[5];
-            $this->email        = $data[6];
-            $this->active       = $data[7];
+            $this->profilepic   = $data[4];
+            $this->email        = $data[5];
+            $this->active       = $data[6];
             $this->dataRetrieved = true;
         $this->dao->setData($data);
         $this->db->close();
@@ -129,8 +138,7 @@ class Student extends Person
                                $data[3],
                                $data[4],
                                $data[5],
-                               $data[6],
-                               $data[7]);
+                               $data[6]);
         $student->setDataRetrieved(true);
         return $student;
     }
@@ -149,7 +157,6 @@ class Student extends Person
                 $this->username.", ".
                 $this->password.", ".
                 $this->fullname.", ".
-                $this->program.", ".
                 $this->profilepic.", ".
                 $this->email.", ".
                 $this->active."]</br>";
