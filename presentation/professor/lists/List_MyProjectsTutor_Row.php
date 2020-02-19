@@ -6,12 +6,10 @@ include "presentation/professor/modals/Modal_ProjectInfo.php";
 function clickReviewAjax(trigger) {
     var route = "indexAjax.php?sid=<?= base64_encode('presentation/professor/ajax/Ajaxie_Capita_Review.php')?>"+
             "&idprojects="+trigger;
-    $('#capita'+trigger).load(route);
-}
-function clickApproveAjax(trigger) {
-    var route = "indexAjax.php?sid=<?= base64_encode('presentation/professor/ajax/Ajaxie_Capita_Approve.php')?>"+
+    var routeIcon = "indexAjax.php?sid=<?= base64_encode('presentation/professor/ajax/Ajaxie_Capita_Review_icon.php')?>"+
             "&idprojects="+trigger;
     $('#capita'+trigger).load(route);
+    $('#icon'+trigger).load(routeIcon);
 }
 </script>
 
@@ -60,9 +58,10 @@ function clickApproveAjax(trigger) {
         ?>
     </td>
     <td>
-        <a href="#" id="<?=$project->getCol($cols[0])?>" 
-           onclick="clickReviewAjax(this.id)"
-           class="<?=($project->getState()==1) ? "" : "btn disabled"?>"><span class="fas fa-check"></span></a>
-           
+        <div id="icon<?=$project->getCol($cols[0])?>">
+            <a href="#" id="<?=$project->getCol($cols[0])?>" 
+                onclick="clickReviewAjax(this.id)"
+                class="<?=($project->getState()==1) ? "" : "btn disabled"?>"><span class="fas fa-check"></span></a>
+        </div>
     </td>
 </tr>
