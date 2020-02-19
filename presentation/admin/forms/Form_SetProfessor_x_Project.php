@@ -15,7 +15,6 @@ $sid = "";
 ?>
 
 <script>
-    <?=(!$disabled)? "$(document).ready(()=>{searchie();})" : ""?>
     function searchie(){
         var route = "indexAjax.php?sid=<?=base64_encode('presentation/admin/ajax/Ajaxie_Form_SetProfessor.php')?>"+
                     "&filter="+$('#form_set_activeProfessors_search').val()+
@@ -23,6 +22,8 @@ $sid = "";
                     "&role=<?=$role?>";
         $('#professorList').load(route);
     }
+    
+    <?=(!$disabled)? "$(document).ready(()=>{searchie();})" : ""?>
 </script>
 
 <form action="index.php" method="POST" 

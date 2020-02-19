@@ -117,7 +117,7 @@ require_once 'logic/project/Project.php';
                     
                     $juries = $project->getJury();
                     if(!empty($juries)) {
-                        echo "<p><span class='fas fa-user-plus'></span>Jurados de este proyecto</p>"
+                        echo "<p><span class='fas fa-user-plus'></span>&nbsp:&nbspJurados de este proyecto</p>"
                             . "<ul>";
                         
                         foreach($juries as $jury) {
@@ -134,8 +134,8 @@ require_once 'logic/project/Project.php';
                         echo "</ul>";
                     }
                     else {
-                        echo "<p><span class='fas fa-exclamation-circle'></span>"
-                            . "Este proyecto no tiene jurados</p>";
+                        echo "<small><span class='fas fa-exclamation-circle'></span>"
+                            . "&nbsp;&nbsp;Esperando a un administrador que asigne los jurados</small>";
                     }
                     ?>
                     

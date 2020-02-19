@@ -60,9 +60,9 @@ function clickApproveAjax(trigger) {
         ?>
     </td>
     <td>
-        <a href="#" id="<?=$project->getCol($cols[0])?>" 
-           onclick="clickReviewAjax(this.id)"
-           class="<?=($project->getState()==1) ? "" : "btn disabled"?>"><span class="fas fa-check"></span></a>
            
+        <a href="#" id="<?=$project->getCol($cols[0])?>" 
+           onclick="clickApproveAjax(this.id)"
+           class="<?=($project->getState()==3) ? "" : "btn disabled"?>"><span class="fas fa-paper-plane"></span></a>
     </td>
 </tr>

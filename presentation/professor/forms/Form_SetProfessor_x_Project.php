@@ -15,7 +15,6 @@ $sid = "";
 ?>
 
 <script>
-    $(document).ready(()=>{searchie();})
     function searchie(){
         var route = "indexAjax.php?sid=<?=base64_encode('presentation/admin/ajax/Ajaxie_Form_SetProfessor.php')?>"+
                     "&filter="+$('#form_set_activeProfessors_search').val()+
