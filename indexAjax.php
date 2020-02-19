@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once 'logic/admin/Admin.php';
 require_once 'logic/student/Student.php';

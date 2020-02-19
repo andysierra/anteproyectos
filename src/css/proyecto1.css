@@ -11,3 +11,15 @@
 .minitext {
    height:23px !important;
 }
+
+.minifont {
+    font-size: 0.9em;
+}
+
+td{
+    font-size: 0.9em;
+}
+
+th{
+    font-size: 0.9em;
+}

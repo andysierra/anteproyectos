@@ -29,8 +29,12 @@ class DB {
 		if($this->result === TRUE){
 			return true;
 		}else{
+                    echo "".$this->mysqli->error."<br>";
 			return false;
 		}
 	}
+        public function sanitize($badString) {
+            return $this->mysqli->real_escape_string(trim($badString));
+        }
 }
 ?>

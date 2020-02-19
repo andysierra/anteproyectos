@@ -79,6 +79,84 @@ class ProjectDAO
         return $returnValue;
     }
 
+    
+     public function searchByInterest($column, $value="", $idprofessor, $isTutor) {
+        $propNames = array();
+        foreach((new ReflectionClass('ProjectDAO'))->getProperties() as $prop)
+            if($prop->getName()!="idcreator")
+                array_push($propNames, $prop->getName());
+        
+        $returnValue = "";
+        
+        if($isTutor) $isTutor=0;
+        else $isTutor = 1;
+        
+        switch($column) {
+            case 'idprojects':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE idprojects like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_professor WHERE professor = '".$idprofessor."' AND role = '".$isTutor."')";
+                break;
+            case 'title':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE title like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_professor WHERE professor = '".$idprofessor."' AND role = '".$isTutor."')";
+                break;
+            case 'abstract':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE abstract like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_professor WHERE professor = '".$idprofessor."' AND role = '".$isTutor."')";
+                break;
+            case 'problem_statement':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE problem_statement like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_professor WHERE professor = '".$idprofessor."' AND role = '".$isTutor."')";
+                break;
+            case 'objectives':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE objectives like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_professor WHERE professor = '".$idprofessor."' AND role = '".$isTutor."')";
+                break;
+            case 'pdf_url':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE pdf_url like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_professor WHERE professor = '".$idprofessor."' AND role = '".$isTutor."')";
+                break;
+            case 'all':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE idprojects IN (SELECT project FROM project_x_professor WHERE professor = '".$idprofessor."' AND role = '".$isTutor."') ";
+                break;
+        }
+        return $returnValue;
+    }
+    
+    
+    public function searchByStudent($column, $value="", $idStudent, $isCreator) {
+        $propNames = array();
+        foreach((new ReflectionClass('ProjectDAO'))->getProperties() as $prop)
+            if($prop->getName()!="idcreator")
+                array_push($propNames, $prop->getName());
+        
+        $returnValue = "";
+        
+        if($isCreator) $isCreator=0;
+        else $isCreator = 1;
+        
+        switch($column) {
+            case 'idprojects':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE idprojects like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_student WHERE student = '".$idStudent."' AND role = '".$isCreator."')";
+                break;
+            case 'title':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE title like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_student WHERE student = '".$idStudent."' AND role = '".$isCreator."')";
+                break;
+            case 'abstract':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE abstract like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_student WHERE student = '".$idStudent."' AND role = '".$isCreator."')";
+                break;
+            case 'problem_statement':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE problem_statement like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_student WHERE student = '".$idStudent."' AND role = '".$isCreator."')";
+                break;
+            case 'objectives':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE objectives like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_student WHERE student = '".$idStudent."' AND role = '".$isCreator."')";
+                break;
+            case 'pdf_url':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE pdf_url like '%".$value."%' AND idprojects IN (SELECT project FROM project_x_student WHERE student = '".$idStudent."' AND role = '".$isCreator."')";
+                break;
+            case 'all':
+                $returnValue = "SELECT ".implode(", ", $propNames)." FROM project WHERE idprojects IN (SELECT project FROM project_x_student WHERE student = '".$idStudent."' AND role = '".$isCreator."') ";
+                break;
+        }
+        return $returnValue;
+    }
+    
+    
+    
     public function setStateDB($newState) {
         return "UPDATE project SET state='".$newState."' WHERE idprojects = '".$this->idprojects."'";
     }
@@ -91,15 +169,19 @@ class ProjectDAO
         return "SELECT idprojects FROM project WHERE pdf_url = '".$this->pdf_url."'";
     }
     
-    public function getCreatorFromDB() {
-        return "SELECT student FROM project_x_student WHERE project = '".$this->idprojects."'";
-    }
-    
     public function retrieveData($idprojects_) {
         return "SELECT * FROM project WHERE idprojects = '".$idprojects_."'";
     }
     
-    public function setDAORetrievedData($data) {
+    public function retrieveCreator($idprojects_) {
+        return "SELECT student FROM project_x_student WHERE project = '".$idprojects_."'";
+    }
+    
+    public function getCreatorFromDB() {
+        return "SELECT student FROM project_x_student WHERE project = '".$this->idprojects."'";
+    }
+    
+    public function setDAORetrievedData($data, $idCreator) {
         $this->idprojects           = $data[0];
         $this->title                = $data[1];
         $this->abstract             = $data[2];
@@ -107,6 +189,33 @@ class ProjectDAO
         $this->objectives           = $data[4];
         $this->pdf_url              = $data[5];
         $this->state                = $data[6];
+        $this->idcreator            = $idCreator;
+    }
+    
+    public function getTutor() {
+        return "SELECT professor FROM project_x_professor WHERE project = '".$this->idprojects."' AND role = 0";
+    }
+    
+    public function getJury() {
+        return "SELECT professor FROM project_x_professor WHERE project = '".$this->idprojects."' AND role = 1";
+    }
+
+    public function setProfessor($idProfessor, $isTutor) {
+        return $isTutor ? 
+                "INSERT INTO project_x_professor(professor, project, role)"
+                . " VALUES ('".$idProfessor."', '".$this->idprojects."', '0')"
+                :
+                "INSERT INTO project_x_professor(professor, project, role)"
+                . " VALUES ('".$idProfessor."', '".$this->idprojects."', '1')";
+    }
+    
+    public function increaseState() {
+        $this->state++;
+        return "UPDATE project SET state = '".$this->state."' WHERE idprojects = '".$this->idprojects."'";
+    }
+    
+    public function getDBState() {
+        return "SELECT state FROM project WHERE idprojects = '".$this->idprojects."'";
     }
     
     function getIdprojects() {

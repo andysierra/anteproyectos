@@ -8,7 +8,7 @@
                 <div class="card-header">
                     <h4 class="segan ml-2 p-0">
                         <span class="fas fa-home"></span>
-                        Home
+                        Home Admin
                     </h4>
                 </div>
                 <div class="card-body px-1 py-2">

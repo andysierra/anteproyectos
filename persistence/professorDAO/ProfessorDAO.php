@@ -106,12 +106,22 @@ public function searchBy($column, $value="") {
         return $returnValue;
     }
     
-    public function staticListAllProfessorsByPair($column, $value) {
-        return "SELECT * FROM professor WHERE ".$column." like '%".$value."%' limit 10";
+    // CORREGIR ESTO
+    public function query(array $column_x_value) {
+        $conditions = "";
+        for($i=0; $i<count($column_x_value); $i++) {
+            $i<count($column_x_value)-1 ? 
+            $conditions .= "".array_keys($column_x_value)[$i]." like '%".array_values($column_x_value)[$i]."%' AND "
+                    :
+            $conditions .= "".array_keys($column_x_value)[$i]." like '%".array_values($column_x_value)[$i]."%'";  
+        }
+        return "SELECT * FROM professor WHERE ".$conditions." limit 10";
     }
 
-        public function userExists() {
-        return "SELECT idprofessor FROM professor WHERE username = '".$this->username."'";
+    public function userExists($withId) {
+        return $withId ? "SELECT idprofessor FROM professor WHERE idprofessor = '".$this->idprofessor."'" 
+                            : 
+                         "SELECT idprofessor FROM professor WHERE username = '".$this->username."'";
     }
 
     public function setData($data) {

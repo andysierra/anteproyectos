@@ -23,7 +23,7 @@
         <div class="row" id="tab-content">
             
             <?php
-                include base64_decode($tabid);
+                include $tabid;
             ?>
             
         </div>

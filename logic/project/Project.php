@@ -1,6 +1,7 @@
 <?php
 require_once 'persistence/db/DB.php';
 require_once 'persistence/projectDAO/ProjectDAO.php';
+require_once 'logic/professor/Professor.php';
 
 class Project
 {
@@ -27,15 +28,15 @@ class Project
         
         $now = new DateTime();
         
-        $this->idprojects           = $idprojects_;
-        $this->title                = $title_;
-        $this->abstract             = $abstract_;
-        $this->problem_statement    = $problem_statement_;
-        $this->objectives           = $objectives_;
-        $this->pdf_url              = $now->format('Y-m-d_H-i-s_').$pdf_url_;
-        $this->state                = $state_;
-        $this->idcreator            = $idcreator_;
         $this->db                   = new DB();
+        $this->idprojects           = $this->sanitize($idprojects_);
+        $this->title                = $this->sanitize($title_);
+        $this->abstract             = $this->sanitize($abstract_);
+        $this->problem_statement    = $this->sanitize($problem_statement_);
+        $this->objectives           = $this->sanitize($objectives_);
+        $this->pdf_url              = $this->sanitize($now->format('Y-m-d_H-i-s_').$pdf_url_);
+        $this->state                = $this->sanitize($state_);
+        $this->idcreator            = $this->sanitize($idcreator_);
         $this->dao                  = new ProjectDAO($this->idprojects,
                                                      $this->title,
                                                      $this->abstract,
@@ -46,6 +47,15 @@ class Project
                                                      $this->idcreator);
     }
     
+    public function sanitize($badString) {
+        $goodString = "";
+        $this->db->open();
+        $goodString .= $this->db->sanitize($badString);
+        $this->db->close();
+        return $goodString;
+    }
+
+
     public function insert() {
         $insertProject_x_Student = false;
         $returnBoolean = false;
@@ -84,23 +94,18 @@ class Project
             $this->db->execute($this->dao->searchBy('idprojects', $string));
             if($this->db->nRows() != 0) $winnerCol = 'idprojects';
             else {
-                echo "NO PUDE ENCONTRAR POR IDPROJECTS :'(<br>";
                 $this->db->execute($this->dao->searchBy('title', $string));
                 if($this->db->nRows() != 0) $winnerCol = 'title';
                 else {
-                    echo "NO PUDE ENCONTRAR POR TITULO :'(<br>";
                     $this->db->execute($this->dao->searchBy('abstract', $string));
                     if($this->db->nRows() != 0) $winnerCol = 'abstract';
                     else {
-                        echo "NO PUDE ENCONTRAR POR ABSTRACT :'(<br>";
                         $this->db->execute($this->dao->searchBy('problem_statement', $string));
                         if($this->db->nRows() != 0) $winnerCol = 'problem_statement';
                         else {
-                            echo "NO PUDE ENCONTRAR POR PROBLEM :'(<br>";
                             $this->db->execute($this->dao->searchBy('objectives', $string));
                             if($this->db->nRows() != 0) $winnerCol = 'objectives';
                             else {
-                                echo "NO PUDE ENCONTRAR POR OBJECTIVES :'(<br>";
                                 $this->db->execute($this->dao->searchBy('pdf_url', $string));
                                 if($this->db->nRows() != 0) $winnerCol = 'pdf_url';
                             }
@@ -124,6 +129,102 @@ class Project
         return $winnerCol!='' ?  $projects : null;
     }
     
+
+    
+    public function searchByInterest($string, $idprofessor, $isTutor) {
+        $projects = array();
+
+        $this->db->open();
+        
+        $winnerCol = '';
+        
+        if($string!="") {
+            $this->db->execute($this->dao->searchByInterest('idprojects', $string, $idprofessor, $isTutor));
+            if($this->db->nRows() != 0) $winnerCol = 'idprojects';
+            else {
+                $this->db->execute($this->dao->searchByInterest('title', $string, $idprofessor, $isTutor));
+                if($this->db->nRows() != 0) $winnerCol = 'title';
+                else {
+                    $this->db->execute($this->dao->searchByInterest('abstract', $string, $idprofessor, $isTutor));
+                    if($this->db->nRows() != 0) $winnerCol = 'abstract';
+                    else {
+                        $this->db->execute($this->dao->searchByInterest('problem_statement', $string, $idprofessor, $isTutor));
+                        if($this->db->nRows() != 0) $winnerCol = 'problem_statement';
+                        else {
+                            $this->db->execute($this->dao->searchByInterest('objectives', $string, $idprofessor, $isTutor));
+                            if($this->db->nRows() != 0) $winnerCol = 'objectives';
+                            else {
+                                $this->db->execute($this->dao->searchByInterest('pdf_url', $string, $idprofessor, $isTutor));
+                                if($this->db->nRows() != 0) $winnerCol = 'pdf_url';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    else {
+            $this->db->execute($this->dao->searchByInterest("all", "", $idprofessor, $isTutor));
+            if($this->db->nRows() != 0) $winnerCol = 'all';
+        }
+        
+        $nRows = $this->db->nRows();
+        $this->db->close();
+        
+        if($winnerCol != '')
+            for($i=0; $i<$nRows; $i++)
+                array_push($projects, $this->createDataProject($this->db->fetch()));
+        
+        return $winnerCol!='' ?  $projects : null;
+    }
+    
+    
+    public function searchByStudent($string, $idStudent, $isCreator) {
+        $projects = array();
+
+        $this->db->open();
+        
+        $winnerCol = '';
+        
+        if($string!="") {
+            $this->db->execute($this->dao->searchByStudent('idprojects', $string, $idStudent, $isCreator));
+            if($this->db->nRows() != 0) $winnerCol = 'idprojects';
+            else {
+                $this->db->execute($this->dao->searchByStudent('title', $string, $idStudent, $isCreator));
+                if($this->db->nRows() != 0) $winnerCol = 'title';
+                else {
+                    $this->db->execute($this->dao->searchByStudent('abstract', $string, $idStudent, $isCreator));
+                    if($this->db->nRows() != 0) $winnerCol = 'abstract';
+                    else {
+                        $this->db->execute($this->dao->searchByStudent('problem_statement', $string, $idStudent, $isCreator));
+                        if($this->db->nRows() != 0) $winnerCol = 'problem_statement';
+                        else {
+                            $this->db->execute($this->dao->searchByStudent('objectives', $string, $idStudent, $isCreator));
+                            if($this->db->nRows() != 0) $winnerCol = 'objectives';
+                            else {
+                                $this->db->execute($this->dao->searchByStudent('pdf_url', $string, $idStudent, $isCreator));
+                                if($this->db->nRows() != 0) $winnerCol = 'pdf_url';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    else {
+            $this->db->execute($this->dao->searchByStudent("all", "", $idStudent, $isCreator));
+            if($this->db->nRows() != 0) $winnerCol = 'all';
+        }
+        
+        $nRows = $this->db->nRows();
+        $this->db->close();
+        
+        if($winnerCol != '')
+            for($i=0; $i<$nRows; $i++)
+                array_push($projects, $this->createDataProject($this->db->fetch()));
+        
+        return $winnerCol!='' ?  $projects : null;
+    }
+    
+    
     public function createDataProject($data) {
         $project = new Project($data[0],
                                $data[1],
@@ -146,7 +247,7 @@ class Project
         return $returnValue;
     }
     
-    public function getCol($what) {
+    public function getCol($what, $truncated=false) {
         $returnValue = "";
         switch($what) {
             case "ID":
@@ -156,13 +257,13 @@ class Project
                 $returnValue = $this->getTitle();
                 break;
             case "Resumen":
-                $returnValue = $this->getAbstract();
+                ($truncated)? $returnValue = substr($this->getAbstract(), 0, 300) : $returnValue = $this->getAbstract();
                 break;
             case "Planteamiento":
-                $returnValue = $this->getProblem_statement();
+                ($truncated)? $returnValue = substr($this->getProblem_statement(), 0, 300) : $returnValue = $this->getProblem_statement();
                 break;
             case "Objetivos":
-                $returnValue = $this->getObjectives();
+                ($truncated)? $returnValue = substr($this->getObjectives(), 0, 300) : $this->getObjectives();
                 break;
             case "PDF":
                 $returnValue = $this->getPdf_url();
@@ -171,7 +272,9 @@ class Project
                 $returnValue = $this->getState();
                 break;
         }
-        return $returnValue;
+        return strlen($returnValue)>298? $returnValue." ..." 
+                : 
+               $returnValue;
     }
     
     function setStateBD($newState) {
@@ -182,6 +285,10 @@ class Project
     
     function setIdcreator($idcreator) {
         $this->idcreator = $idcreator;
+    }
+    
+    function getIdCreator() {
+        return $this->idcreator;
     }
     
     function setIdprojects($idprojects) {
@@ -211,11 +318,67 @@ class Project
             $this->objectives           = $data[4];
             $this->pdf_url              = $data[5];
             $this->state                = $data[6];
-            $this->dao->setDAORetrievedData($data);
+            
+            $this->db->execute($this->dao->retrieveCreator($idprojects_));
+            $this->idcreator = $this->db->fetch()[0];
+            
+            $this->dao->setDAORetrievedData($data, $this->idcreator);
             $success = true;
         } else $success = false;
         $this->db->close();
         return $success;
+    }
+    
+    public function getTutor() {
+        $returnIdProfessor = null;
+        $this->db->open();
+        $this->db->execute($this->dao->getTutor());
+        if($this->db->nRows()>0)
+            $returnIdProfessor = $this->db->fetch()[0];
+        $this->db->close();
+        return $returnIdProfessor;
+    }
+    
+    public function getJury() {
+        $juries = array();
+        $this->db->open();
+        $this->db->execute($this->dao->getJury());
+        if($this->db->nRows()>0)
+            for($i=0; $i<$this->db->nRows(); $i++)
+                array_push ($juries, $this->db->fetch()[0]);
+        $this->db->close();
+        return $juries;
+    }
+    
+    public function updateState($idProfessor="") {
+        $reason = 0;
+        if($this->state<5) {
+            if($idProfessor != "") {
+                if((new Professor($idProfessor,"","","","","",""))->userExists(true) && $this->state<3) {
+                    $this->db->open();
+                    if($this->state==0)
+                        $this->db->execute($this->dao->setProfessor($idProfessor,true));
+                    else if ($this->state==2)
+                        $this->db->execute($this->dao->setProfessor($idProfessor,false));
+                    $success = $this->db->success();
+                    $this->db->close();
+                    if($success && $this->state%2==0) $this->increaseDBState();
+                } else $reason++; // professor doesn't exist
+            } 
+            else {
+                if($this->state == 1 || $this->state == 3) $this->increaseDBState();
+                else $reason = 2; // operation forbidden due to current state
+            }
+        }
+        return $reason;
+    }
+
+    public function increaseDBState() {
+        $this->db->open();
+        $this->db->execute($this->dao->increaseState());
+        $this->db->execute($this->dao->getDBState());
+        $this->state = (int)$this->db->fetch()[0];
+        $this->db->close();
     }
     
     function getIdprojects() {

@@ -2,17 +2,20 @@
 
     $cols = array();
     $cols[0] = "ID";
-    $cols[1] = "Username";
-    $cols[2] = "Nombre Completo";
-    $cols[3] = "Correo Electrónico";
-    $cols[4] = "Activo"; 
+    $cols[1] = "Título";
+    $cols[2] = "Resumen";
+    $cols[3] = "Planteamiento";
+    $cols[4] = "Objetivos";
+    $cols[5] = "PDF";
+    $cols[6] = "Estado";
+    $cols[7] = "Acciones";
     
     //echo "GLOBAL SEARCHING FOR FILTER: ".$_GET['filter']."<br>";
     
     if(empty($_GET['filter']))
-        $students = (new Student())->search("");
+        $projects = (new Project())->searchByInterest("", $_SESSION['id'], 1);
     else
-        $students = (new Student())->search($_GET['filter']);
+        $projects = (new Project())->searchByInterest($_GET['filter'], $_SESSION['id'], 1);
 
 ?>
 
@@ -29,9 +32,9 @@
     <tbody>
         
         <?php
-            if($students != null)
-                foreach($students as $student) {
-                    include "List_Students_Row.php";
+            if($projects != null)
+                foreach($projects as $project) {
+                    include "List_MyProjectsTutor_Row.php";
                 }
         ?>
         

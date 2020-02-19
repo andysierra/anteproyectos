@@ -10,9 +10,10 @@ $error = 0;
 $newConfirmation = 0;
 $topbar = "presentation/mainPage/topbars/MainTopbar.php";
 $tabs = "";
-$tabid = base64_encode("presentation/admin/Tab_Home.php");
+$tabid = "";
 $content = "presentation/mainPage/MainPage.php";
 $user;
+$jumpLogedUser = false;
 
 // SI VENGO DE CONFIRMAR UN NUEVO USUARIO
 if(!empty($_POST['form_confirm_student'])) {
@@ -27,7 +28,7 @@ if(!empty($_POST['form_confirm_student'])) {
 }
 else if(!empty($_POST['form_confirm_professor'])) {
     $newUser = new Professor("",$_POST['form_confirm_professor'],"","","","","");
-    if($newUser->userExists()) {
+    if($newUser->userExists(false)) {
         if($newUser->confirmNewUser($_POST['form_confirm_professor_password'],
                                  $_POST['form_confirm_professor_email'],
                                  $_POST['form_confirm_professor_profilepic'])) // aquí se activa al profesor
@@ -60,7 +61,7 @@ if(!empty($_GET['email_activatestudent']) || !empty($_GET['email_activateprofess
     }
     else if(!empty($_GET['email_activateprofessor'])) {
         $newUser = new Professor("",$_GET['email_activateprofessor'],"","","","","");
-        if($newUser->userExists())
+        if($newUser->userExists(false))
         {
             if(!empty($_SESSION['entity'])) {
                 $user = null;
@@ -96,6 +97,13 @@ if(!empty($_GET['email_activatestudent']) || !empty($_GET['email_activateprofess
                     $tabs    = "presentation/student/topbars/Tabs_Dashboard.php";
                     $content = "presentation/student/Dashboard.php";
                     break;
+                case 3:
+                    $user = new Professor($_SESSION['id'],"","","","","","");
+                    $user->retrieveAccountData(true);
+                    $topbar  = "presentation/professor/topbars/Topbar_Dashboard.php";
+                    $tabs    = "presentation/professor/topbars/Tabs_Dashboard.php";
+                    $content = "presentation/professor/Dashboard.php";
+                    break;
             }
         }
         $error = 4;
@@ -111,19 +119,30 @@ if(!empty($_GET['exit'])){
     session_destroy();
 }
 
+
 // SI HA CREADO UN NUEVO USUARIO
 if(!empty($_SESSION['entity']) && !empty($_POST['form_create_student'])) {
     
     // verificar si el estudiante existe, o sino error 2
     $newUser = new Student("",$_POST['form_create_student_username'],
                            "","","","","");
-    if($newUser->userExists())
+    if($newUser->userExists()) {
         $error=2;
+        $topbar  = "presentation/admin/topbars/Topbar_Dashboard.php";
+        $tabs    = "presentation/admin/topbars/Tabs_Dashboard.php";
+        $content = "presentation/admin/Tab_Professors.php";
+        $jumpLogedUser = true;
+    }
     else {
         $newUser->insertNewStudent ($_POST['form_create_student_fullname'],
                                     $_POST['form_create_student_program'],
                                     $_POST['form_create_student_email']);
         $error = -2;
+        $topbar  = "presentation/admin/topbars/Topbar_Dashboard.php";
+        $tabs    = "presentation/admin/topbars/Tabs_Dashboard.php";
+        $content = "presentation/admin/Tab_Students.php";
+        $jumpLogedUser = true;
+        
     }
 }
 else {
@@ -132,18 +151,27 @@ else {
         // verificar si el profesor existe, o sino error 2
         $newUser = new Professor("",$_POST['form_create_professor_username'],
                                "","","","","");
-        if($newUser->userExists())
+        if($newUser->userExists(false)) {
             $error=2;
+            $topbar  = "presentation/admin/topbars/Topbar_Dashboard.php";
+            $tabs    = "presentation/admin/topbars/Tabs_Dashboard.php";
+            $content = "presentation/admin/Tab_Professors.php";
+            $jumpLogedUser = true;
+        }
         else {
             $newUser->insertNewProfessor ($_POST['form_create_professor_fullname'],
                                         $_POST['form_create_professor_program'],
                                         $_POST['form_create_professor_email']);
             $error = -2;
+            $topbar  = "presentation/admin/topbars/Topbar_Dashboard.php";
+            $tabs    = "presentation/admin/topbars/Tabs_Dashboard.php";
+            $content = "presentation/admin/Tab_Professors.php";
+            $jumpLogedUser = true;
         }
     }
     else {
         if(!empty($_SESSION['entity']) && !empty($_POST['form_create_project'])) {
-
+            
             // verificar si el proyecto existe, o sino error 10
             $newProject = new Project("",
                     $_POST['form_create_project_title'],
@@ -171,23 +199,43 @@ if(!empty($_SESSION['entity']) &&
         case 1:
             $user = new Admin($_SESSION['id'],"","","","","");
             $user->retrieveAccountData(true);
-            $topbar  = "presentation/admin/topbars/Topbar_Dashboard.php";
-            $tabs    = "presentation/admin/topbars/Tabs_Dashboard.php";
-            $content = "presentation/admin/Dashboard.php";
+            if(!$jumpLogedUser) {
+                $topbar  = "presentation/admin/topbars/Topbar_Dashboard.php";
+                $tabs    = "presentation/admin/topbars/Tabs_Dashboard.php";
+                $content = "presentation/admin/Dashboard.php";
+            $tabid   = "presentation/admin/Tab_Home.php";
+                $jumpLogedUser = false;
+            }
             break;
         case 2:
             $user = new Student($_SESSION['id'],"","","","","","","");
             $user->retrieveAccountData(true);
-            $topbar  = "presentation/student/topbars/Topbar_Dashboard.php";
-            $tabs    = "presentation/student/topbars/Tabs_Dashboard.php";
-            $content = "presentation/student/Dashboard.php";
+            if(!$jumpLogedUser) {
+                $topbar  = "presentation/student/topbars/Topbar_Dashboard.php";
+                $tabs    = "presentation/student/topbars/Tabs_Dashboard.php";
+                $content = "presentation/student/Dashboard.php";   
+            $tabid   = "presentation/student/Tab_Home.php";
+                $jumpLogedUser = false;
+            }
+            break;
+        case 3:
+            $user = new Professor($_SESSION['id'],"","","","","","","");
+            $user->retrieveAccountData(true);
+            if(!$jumpLogedUser) {
+                $topbar  = "presentation/professor/topbars/Topbar_Dashboard.php";
+                $tabs    = "presentation/professor/topbars/Tabs_Dashboard.php";
+                $content = "presentation/professor/Dashboard.php";   
+            $tabid   = "presentation/professor/Tab_Home.php";
+                $jumpLogedUser = false;
+            }
             break;
     }
     
     // ESPACIO PARA REDIRS
     if(!empty($_GET['tid'])) {
-        $tabid = $_GET['tid'];
+        $tabid = base64_decode($_GET['tid']);
     }
+    
 }
 else {
     // SI NO HAY UN USUARIO Y SE LOGUEA
@@ -202,6 +250,7 @@ else {
             $topbar  = "presentation/admin/topbars/Topbar_Dashboard.php";
             $tabs    = "presentation/admin/topbars/Tabs_Dashboard.php";
             $content = "presentation/admin/Dashboard.php";
+            $tabid   = "presentation/admin/Tab_Home.php";
         }
         else {
             $user = new Student("",$_POST['form_login_username'], $_POST['form_login_password'],"","","","","");
@@ -212,6 +261,7 @@ else {
                 $topbar  = "presentation/student/topbars/Topbar_Dashboard.php";
                 $tabs    = "presentation/student/topbars/Tabs_Dashboard.php";
                 $content = "presentation/student/Dashboard.php";
+                $tabid   = "presentation/student/Tab_Home.php";
             }
             else {
                 $user = new Professor("",$_POST['form_login_username'], $_POST['form_login_password'],"","","","","");
@@ -222,6 +272,7 @@ else {
                     $topbar  = "presentation/professor/topbars/Topbar_Dashboard.php";
                     $tabs    = "presentation/professor/topbars/Tabs_Dashboard.php";
                     $content = "presentation/professor/Dashboard.php";
+                    $tabid   = "presentation/professor/Tab_Home.php";
                 }
                 else {
                     // BLOQUE DE CÓDIGO PARA CUANDO NINGUNO DE LOS USUARIOS EXISTA EN EL SISTEMA

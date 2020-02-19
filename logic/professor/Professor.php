@@ -141,10 +141,10 @@ class Professor extends Person
         return $professor;
     }
     
-    public function userExists() {
+    public function userExists($withId) {
         $returnBoolean = false;
         $this->db->open();
-        $this->db->execute($this->dao->userExists());
+        $this->db->execute($this->dao->userExists($withId));
         if($this->db->nRows()!=0) $returnBoolean = true;
         $this->db->close();
         return $returnBoolean;
@@ -172,23 +172,29 @@ class Professor extends Person
         return $returnValue;
     }
     
-    public function staticListAllProfessorsByPair($column, $value) {
+    public function staticAdvancedSearch(array $column_x_value) {
         $professors = array();
+        
         $this->db->open();
-        $this->db->execute($this->dao->staticListAllProfessorsByPair($column, $value));
+        $this->db->execute($this->dao->query($column_x_value));
         if($this->db->nRows()>0)
             for($i=0; $i<$this->db->nRows(); $i++) {
                 $data = $this->db->fetch();
                 array_push($professors, new Professor($data[0],
-                                                      $data[1],
-                                                      $data[2],
-                                                      $data[3],
-                                                      $data[4],
-                                                      $data[5],
-                                                      $data[6],));
+                        $data[1],
+                        $data[2],
+                        $data[3],
+                        $data[4],
+                        $data[5],
+                        $data[6]));
             }
         $this->db->close();
+        
         return $professors;
+    }
+    
+    public function getIdprofessor() {
+        return $this->id;
     }
     
     public function toString() {

@@ -8,9 +8,9 @@ $cols = array();
     $cols[3] = "Estado";
 
 if(empty($_GET['filter']))
-    $projects = (new Project())->search("");
+    $projects = (new Project())->searchByStudent("", $_SESSION['id'], 1);
 else
-    $projects = (new Project())->search($_GET['filter']);
+    $projects = (new Project())->searchByStudent($_GET['filter'], $_SESSION['id'], 1);
     
 if($projects != null)
     foreach($projects as $project)
